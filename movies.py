@@ -31,7 +31,7 @@ def getReviews():
 
     reviews = soup.find_all('div', class_ = 'review-container')
     
-    # gets the first 3 reviews for film
+    # gets the first 3 reviews for filmm
     for x in reviews[0:3]:
         print(x.text)
 
