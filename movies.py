@@ -1,9 +1,16 @@
+from lib2to3.pgen2 import driver
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import requests
 import re
+import time
 
 base_url = 'https://www.imdb.com/title/tt9419884/'
 
+
+driver = webdriver.Chrome('C:\\Users\\SatchinMistry\\Downloads\\chromedriver_win32\\chromedriver.exe')
 
 # function to get the user and critics ratings
 def getRatings():
@@ -73,5 +80,23 @@ def getTrivia():
 #maybe use IMDB APIs to get the movie code based on title
 
 #function to determine if TV or Movie > Scrape r/television or r/movies for OFFICIAL DISCUSSION comments
+def redditScrape(name):
 
+    #name of movie/tv but underscored so it can be searched
+    name_underscored = name.replace(' ','_')
+    
+    movie_url = 'https://www.reddit.com/r/movies/search/?q='
+    driver.get(movie_url+name_underscored)
+    driver.find_element(By.CLASS_NAME,'_2i5O0KNpb9tDq0bsNOZB_Q').click()
+    
+    time.sleep(10)
+    soup = BeautifulSoup(driver.page_source, 'lxml')
+    
+    top_comments = soup.find_all('div',class_='Comment t1_ibt6wqf P8SGAKMtRxNwlmLz1zdJu HZ-cv9q391bm8s7qT54B3 _1z5rdmX8TDr6mqwNv7A70U')
+    for x in top_comments:
+        print(x.text)
+
+redditScrape('Hustle')
 #function to package everything up (maybe send as email)
+
+#function to get user input if TV/Film and Name
