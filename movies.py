@@ -1,3 +1,4 @@
+from email.mime import base
 from lib2to3.pgen2 import driver
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -6,11 +7,32 @@ from bs4 import BeautifulSoup
 import requests
 import re
 import time
+from imdb import Cinemagoer
 
-base_url = 'https://www.imdb.com/title/tt9419884/'
 
 
-driver = webdriver.Chrome('C:\\Users\\SatchinMistry\\Downloads\\chromedriver_win32\\chromedriver.exe')
+#function to get user input
+def getMovie():
+
+    movieTitle = input("What is the movie name?")
+    movieYear = input("What year did the movie come out?")
+    movieSeen = input("Have you seen this movie or not?")
+
+    return movieTitle, movieYear, movieSeen
+
+
+
+#function to get movie code
+def getCode(movieTitle, movieYear):
+
+    ia = Cinemagoer()
+
+    movie_data = ia.search_movie(movieTitle)
+    for x in movie_data:
+        if x['title'] == movieTitle and x['year'] == int(movieYear):
+            return x.movieID
+
+
 
 # function to get the user and critics ratings
 def getRatings():
@@ -24,13 +46,12 @@ def getRatings():
 
 
 # function to get user reviews
-def getReviews():
+def getReviews(seen_film):
 
     # hides spoilers depending if you have seen the film or not
-    seen_film = False
-    if seen_film == False:
+    if seen_film.casefold() == 'no':
         url2 = base_url + 'reviews?spoiler=hide'
-    elif seen_film == True:
+    elif seen_film.casefold() == 'yes':
         url2 = base_url + 'reviews'
     
     reviews_html = requests.get(url2).text
@@ -74,14 +95,10 @@ def getTrivia():
         print(i[0].strip())
 
 
-
-#TO-DO
-
-#maybe use IMDB APIs to get the movie code based on title
-
 #function to determine if TV or Movie > Scrape r/television or r/movies for OFFICIAL DISCUSSION comments
-def redditScrape(name):
-
+def getReddit(name):
+   
+    driver = webdriver.Chrome('C:\\Users\\SatchinMistry\\Downloads\\chromedriver_win32\\chromedriver.exe')
     #name of movie but underscored so it can be searched
     name_underscored = name.replace(' ','_')
     
@@ -100,7 +117,19 @@ def redditScrape(name):
         for i in comment:
             print(i.text)
 
-redditScrape('The Batman')
+
+
+movieTitle, movieYear, movieSeen = getMovie()
+movieID = getCode(movieTitle, movieYear)
+
+base_url = 'https://www.imdb.com/title/tt' + str(movieID) + '/'
+
+
+getRatings()
+getReviews(movieSeen)
+getTrivia()
+getReddit(movieTitle)
+#TO-DO
+
 #function to package everything up (maybe send as email)
 
-#function to get user input
