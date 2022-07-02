@@ -82,7 +82,7 @@ def getTrivia():
 #function to determine if TV or Movie > Scrape r/television or r/movies for OFFICIAL DISCUSSION comments
 def redditScrape(name):
 
-    #name of movie/tv but underscored so it can be searched
+    #name of movie but underscored so it can be searched
     name_underscored = name.replace(' ','_')
     
     movie_url = 'https://www.reddit.com/r/movies/search/?q='
@@ -92,11 +92,15 @@ def redditScrape(name):
     time.sleep(10)
     soup = BeautifulSoup(driver.page_source, 'lxml')
     
-    top_comments = soup.find_all('div',class_='Comment t1_ibt6wqf P8SGAKMtRxNwlmLz1zdJu HZ-cv9q391bm8s7qT54B3 _1z5rdmX8TDr6mqwNv7A70U')
-    for x in top_comments:
-        print(x.text)
+    top_comments = soup.select('div[class*="P8SGAKMtRxNwlmLz1zdJu HZ-cv9q391bm8s7qT54B3 _1z5rdmX8TDr6mqwNv7A70U"]')
+    
+    #prints off top 6 comments
+    for x in top_comments[0:6]:
+        comment = x.select('p')
+        for i in comment:
+            print(i.text)
 
-redditScrape('Hustle')
+redditScrape('The Batman')
 #function to package everything up (maybe send as email)
 
-#function to get user input if TV/Film and Name
+#function to get user input
