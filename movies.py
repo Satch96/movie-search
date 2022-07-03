@@ -1,5 +1,3 @@
-from email.mime import base
-from lib2to3.pgen2 import driver
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -59,9 +57,15 @@ def getReviews(seen_film):
 
     reviews = soup.find_all('div', class_ = 'review-container')
     
-    # gets the first 3 reviews for filmm
+    # gets the first 3 reviews for film
     for x in reviews[0:3]:
-        print(x.text)
+        title = x.select_one('a[class="title"]').text
+        review = x.find_all('div',class_='content')
+
+        for i in review:
+            review_text = i.find('div',class_='text show-more__control').text
+        print(title)
+        print(review_text)
 
 
 #get trivia from IMDB (again, check for spoilers)
